@@ -78,8 +78,9 @@ if("-train" in argv):
     if(useFeature is not ""):
         ml_learn.train(useFeature,target)
 if("-fdepend" in argv):
-    ml_feature_depend.featureDependency(useFeature,"anison")
-#    ml_feature_depend.featureDependency(useFeature,["thbgm"],["gtzan"])
+    ml_feature_depend.featureDependency(useFeature,"gtzan")
+if("-fdependrfe" in argv):
+    ml_feature_depend.featureDependencyWithRFE(useFeature,"gtzan")
 
 if("-suggestTN" in argv):
     ml_suggest_TN.suggest(useFeature,trial)
