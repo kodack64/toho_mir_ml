@@ -1,5 +1,5 @@
 # toho_mir_ml
-C90寄稿記事のソース　東方のbgmを分類したり特徴量を調べたりする。
+C90寄稿記事のソース　東方のbgmを分類したり特徴量を調べたりしました。
 
 やった内容の解説は[gitbook](https://www.gitbook.com/book/kodack64/toho_mir_ml)を読んでください
 
