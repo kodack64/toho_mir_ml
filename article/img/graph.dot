@@ -1,0 +1,95 @@
+digraph node_sample {
+  newrank = true;
+  graph[
+    charset = "utf-8",
+    compound = true,
+    rankdir = LR
+  ];
+
+  subgraph cluster0{
+    label = "Raw Media";
+    tsutaya [label = "CD Shop"];
+    cd [label = "Music CD"];
+    tsutaya->cd;
+    
+    academic [label = "Academic DB"];
+    sns [label ="Music SNS"];
+    datasets [label = "Datasets"];
+    {academic;sns} -> datasets;
+    thbgm [label = "toho bgm"];
+    other [label = "not toho bgm"];
+    {rank=same;thbgm;other}
+  };
+  
+  subgraph cluster2{
+    label = "Feature Extraction and Dimensionarity Reduction";
+    mfcc [label = "MFCC"];
+    cp [label = "Chord Progression"];
+    rp [label = "Rhythm Pattern"];
+    mfccs [label = "MFCC Statistics"];
+    tfidf [label = "N-gram degree name TFIDF vector"];
+    ssd [label = "Statistical Spectrum Descriptor"];
+  };
+
+  subgraph cluster4{
+    label = "Learning";
+    lsvm [label = "Linear SVM"];
+    xgb [label = "XGBoost"];
+    om [label = "RandomForest, ExtraTrees,\n SVM and Logit"];
+  };
+
+  subgraph cluster5{
+    label = "Analysis";
+    rfe [label = "Recursive Feature Ellimination"];
+    dbg [label = "Decision Boundary", color="#ababab"];
+    xgb2 [label = "XGBoost"];
+    rfe -> xgb2;
+    dep [label = "Partial Denepdence plot", color="#ababab"];
+    fimp [label = "Feature Importance\nFeature Rank", color="#ababab"];
+    xgb2 -> {dep;fimp};
+    
+    stack [label = "Predict Proba"];
+    xgb3 [label = "XGBoost"];
+    stackp [label = "Prediction with \nstacked generalization", color="#ababab"];
+    stack->xgb3->stackp;
+    
+    ROC [label = "ROC Curve", color = "#ababab"];
+    {rank=same;stackp;dbg;fimp;ROC;dep}
+  };
+  
+  subgraph cluster6{
+    label = "Discussion";
+    d1 [label = "Classification Accuracy"];
+    d2 [label = "Confusing Musics"];
+    d3 [label = "Best feature for classification"];
+    d4 [label = "Popular chord progression and rhythm pattern"];
+  }
+
+  cd -> {thbgm;other};
+  datasets -> other;
+  
+  thbgm -> mfcc [ltail = "cluster0" , lhead = "cluster2",style = invis];
+  other -> cp [ltail = "cluster0", label = "HarmTrace"];
+  other -> mfcc [ltail = "cluster0", label = "LibROSA",constraint =false];
+  other -> rp [ltail = "cluster0", label = "rp_extract",constraint =false];
+  other -> rp [style = invis];
+  
+  mfcc -> mfccs;
+  cp -> tfidf;
+  rp -> ssd;
+  
+  mfccs -> om [style=invis,weight = 10]
+  tfidf -> xgb [ltail = "cluster2", lhead = "cluster4"];
+  ssd -> lsvm [style = invis]
+  rp -> lsvm[weight = 0.5];
+  
+  stackp -> d1;
+  ROC -> d2;
+  {ROC;dbg} -> d3;
+  {dep;fimp} -> d4;
+
+  xgb -> ROC;
+  {xgb;om} -> stack;
+  lsvm -> {rfe;dbg};
+  lsvm->fimp;
+}
